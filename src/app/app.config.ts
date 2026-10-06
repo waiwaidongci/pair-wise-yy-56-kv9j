@@ -10,7 +10,7 @@ import { weldReducer } from './store/weld.reducer'
 
 const mockGraphqlLink = new ApolloLink((operation) => new Observable((observer) => {
   setTimeout(() => {
-    observer.next({ data: operation.operationName === 'Welds' ? mockData : {} })
+    observer.next({ data: mockData })
     observer.complete()
   }, 180)
 }))
@@ -26,6 +26,33 @@ const mockData = {
   plans: [
     { id:'IP-2026-0930-A', date:'2026-09-30', method:'UT + MT', weldIds:['W-105','W-106','W-108'], inspector:'陈锋', state:'待执行' },
     { id:'IP-2026-0929-B', date:'2026-09-29', method:'UT', weldIds:['W-104'], inspector:'赵岚', state:'执行中' },
+  ],
+  // ===== 焊缝 · 热处理炉批 · 硬度复测 同一依据 =====
+  furnaceBatches: [
+    { id:'FB-2026-1001', weldIds:['W-101','W-104'], status:'已出炉', temperatureZone:'600-650℃', holdingTime:120, materialGroup:'Q355B / 组别Ⅱ', basisHash:'WB:600-650℃|120|Q355B / 组别Ⅱ', version:1, occupiedBy:'', occupiedAt:'', createdAt:'2026-09-20' },
+    { id:'FB-2026-1002', weldIds:['W-107','W-109'], status:'热处理中', temperatureZone:'620-680℃', holdingTime:150, materialGroup:'Q355B / 组别Ⅱ', basisHash:'WB:620-680℃|150|Q355B / 组别Ⅱ', version:1, occupiedBy:'', occupiedAt:'', createdAt:'2026-09-22' },
+    { id:'FB-2026-1003', weldIds:['W-112'], status:'待处理', temperatureZone:'580-620℃', holdingTime:90, materialGroup:'Q420B / 组别Ⅲ', basisHash:'WB:580-620℃|90|Q420B / 组别Ⅲ', version:1, occupiedBy:'', occupiedAt:'', createdAt:'2026-09-25' },
+  ],
+  hardnessRetests: [
+    { id:'HR-001', furnaceBatchId:'FB-2026-1001', weldId:'W-101', value:198, criterion:'≤220 HBW', result:'合格', basisHash:'WB:600-650℃|120|Q355B / 组别Ⅱ', reportNo:'HB-2026-1001', issued:true, idemKey:'ONLINE-HR-001', source:'在线', createdAt:'2026-09-21' },
+    { id:'HR-002', furnaceBatchId:'FB-2026-1001', weldId:'W-104', value:205, criterion:'≤220 HBW', result:'合格', basisHash:'WB:600-650℃|120|Q355B / 组别Ⅱ', reportNo:'HB-2026-1002', issued:true, idemKey:'ONLINE-HR-002', source:'在线', createdAt:'2026-09-21' },
+    { id:'HR-003', furnaceBatchId:'FB-2026-1002', weldId:'W-107', value:210, criterion:'≤220 HBW', result:'合格', basisHash:'WB:620-680℃|150|Q355B / 组别Ⅱ', reportNo:'', issued:false, idemKey:'ONLINE-HR-003', source:'在线', createdAt:'2026-09-23' },
+    { id:'HR-004', furnaceBatchId:'FB-2026-1002', weldId:'W-107', value:232, criterion:'≤220 HBW', result:'待复核', basisHash:'WB:600-650℃|120|Q355B / 组别Ⅱ', reportNo:'HB-2026-0988', issued:true, idemKey:'ONLINE-HR-004', source:'在线', createdAt:'2026-09-10' },
+  ],
+  repairPlans: [
+    { id:'RP-FB-2026-1001-1', furnaceBatchId:'FB-2026-1001', weldIds:['W-101','W-104'], basisHash:'WB:600-650℃|120|Q355B / 组别Ⅱ', state:'有效', version:1, reason:'初始编制', updatedAt:'2026-09-20' },
+    { id:'RP-FB-2026-1002-1', furnaceBatchId:'FB-2026-1002', weldIds:['W-107','W-109'], basisHash:'WB:620-680℃|150|Q355B / 组别Ⅱ', state:'有效', version:1, reason:'初始编制', updatedAt:'2026-09-22' },
+    { id:'RP-FB-2026-1003-1', furnaceBatchId:'FB-2026-1003', weldIds:['W-112'], basisHash:'WB:580-620℃|90|Q420B / 组别Ⅲ', state:'有效', version:1, reason:'初始编制', updatedAt:'2026-09-25' },
+  ],
+  fieldRecords: [
+    { id:'FR-1', idemKey:'IDEM|FB-2026-1002|W-107|212|2026/10/4 09:12:00', furnaceBatchId:'FB-2026-1002', weldId:'W-107', actor:'陈锋', value:212, criterion:'≤220 HBW', clientCreatedAt:'2026-10-04 09:12:00', status:'待提交' },
+    { id:'FR-2', idemKey:'IDEM|FB-2026-1001|W-104|201|2026/10/3 14:20:00', furnaceBatchId:'FB-2026-1001', weldId:'W-104', actor:'赵岚', value:201, criterion:'≤220 HBW', clientCreatedAt:'2026-10-03 14:20:00', status:'已合并', mergedAt:'2026-10-03 15:02:00' },
+    { id:'FR-3', idemKey:'IDEM|FB-2026-1003|W-112|215|2026/10/4 10:05:00', furnaceBatchId:'FB-2026-1003', weldId:'W-112', actor:'陈锋', value:215, criterion:'≤220 HBW', clientCreatedAt:'2026-10-04 10:05:00', status:'失败', failReason:'模拟网络中断，未收到服务端确认' },
+  ],
+  legacyRetests: [
+    { id:'LR-1', weldId:'W-101', value:195, method:'UT', reportNo:'HB-2026-0801', createdAt:'2026-08-15', associated:false },
+    { id:'LR-2', weldId:'W-107', value:208, method:'MT', reportNo:'', createdAt:'2026-09-01', associated:false },
+    { id:'LR-3', weldId:'W-112', value:210, method:'UT', reportNo:'HB-2026-0712', createdAt:'2026-07-20', associated:false },
   ],
 }
 
