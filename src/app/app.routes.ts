@@ -2,6 +2,7 @@ import { Routes } from '@angular/router'
 import { OverviewComponent } from './pages/overview.component'
 import { WeldMapComponent } from './pages/weld-map.component'
 import { InspectionsComponent } from './pages/inspections.component'
+import { BasisChainComponent } from './pages/basis-chain.component'
 import { ApprovalsComponent } from './pages/approvals.component'
 
 export const routes: Routes = [
@@ -9,5 +10,6 @@ export const routes: Routes = [
   { path:'overview', component:OverviewComponent, title:'焊缝台账总览' },
   { path:'map', component:WeldMapComponent, title:'构件焊缝定位' },
   { path:'inspections', component:InspectionsComponent, title:'检测与返修' },
+  { path:'basis-chain', component:BasisChainComponent, title:'返修依据链' },
   { path:'approvals', component:ApprovalsComponent, title:'审核与锁定' },
 ]
